@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const {Schema} = mongoose;
 
 const sentEmailSchema = new Schema(
     {
@@ -23,3 +23,5 @@ const sentEmailSchema = new Schema(
     },
     { timestamps: true }
 );
+
+mongoose.model('sentemails', sentEmailSchema);

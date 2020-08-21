@@ -1,6 +1,19 @@
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const app = express();
+const mongoose= require('mongoose');
+require('dotenv').config();
+
+// database connection
+mongoose.connect(process.env.mongoURI,{
+  useNewUrlParser: true, 
+  useUnifiedTopology: true
+}).then(()=>console.log("Database is connected!")).catch(err=> console.log(err));;
+
+require('./models/SentEmail');
+const EmailSent = mongoose.model('sentemails');
+
+
 
 // CSV an EMail Processing
 
@@ -41,8 +54,7 @@ app.post("/upload", (req, res) => {
   .on('end', () => {
     for (var i=0; i<tempResults.length; i++){
         tempList.push(tempResults[i].Email);
-    }
-    
+    }  
 
      res.json({ fileName: file.name, filePath: `/uploads/${file.name}`, fileContent: tempList, entireFile: file });
 
@@ -53,6 +65,39 @@ app.post("/upload", (req, res) => {
   });
 
 });
+// send Email Function
+function sendEmail(list){
+  
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: USER_EMAIL,
+      pass: EMAIL_PASSWORD,
+    },
+  });
+  
+  var mailOptions = {
+    
+    from: USER_EMAIL,
+    to: list,
+    subject: "Just Testing",
+    text: `I am sending you this email 
+    from Node.js application using emails from uploaded CSV file`,
+    // html: '<h1>Hello</h1>'
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      // res.send("Email(s) are sent to: " + list+". File containing data has been removed from the server");
+      //  res.send('Email(s) are sent to: ' +list +'Tech Details: '+ info.response);
+    }
+  });
+
+}
+// End send Email Function
+
 
 // Send email Route
 app.post("/sendemails", (req, res) => {
@@ -78,37 +123,22 @@ app.post("/sendemails", (req, res) => {
           for (var i = 0; i < results.length; i++) {
             list.push(results[i].Email);
           }
-          // console.log(list);
+          console.log(list[0]);
+          
         });
 
       // send Email
 
-      var transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: USER_EMAIL,
-          pass: EMAIL_PASSWORD,
-        },
-      });
+      // sendEmail(list);
 
-      var mailOptions = {
-        from: USER_EMAIL,
-        to: list,
-        subject: "Just Testing",
-        text: `I am sending you this email 
-          from Node.js application includes upload files`,
-        // html: '<h1>Hello</h1>'
-      };
 
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          res.send("Email(s) are sent to: " + list+". File containing data has been removed from the server");
-          //  res.send('Email(s) are sent to: ' +list +'Tech Details: '+ info.response);
-        }
-      });
+// save to database
 
+
+// End save to database
+
+
+      res.send({mess:`Email(s) are successfully sent.  File containing data has been removed from the server` });
 
 
       // Delete File from server - MAKE IT A FUNCTION
