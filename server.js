@@ -31,9 +31,27 @@ app.post("/upload", (req, res) => {
       console.error(err);
       return res.status(500).send(err);
     }
+    // create temp list of emails to render
+    const tempResults= [];
+    var tempList= [];
+    const path = `${__dirname}/client/public/uploads/${file.name}`;
+    fs.createReadStream(path)
+  .pipe(csv())
+  .on('data', (data) => tempResults.push(data))
+  .on('end', () => {
+    for (var i=0; i<tempResults.length; i++){
+        tempList.push(tempResults[i].Email);
+    }
+    
 
-    res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+     res.json({ fileName: file.name, filePath: `/uploads/${file.name}`, fileContent: tempList, entireFile: file });
+
   });
+  
+  // end create temp list of emails to render
+   
+  });
+
 });
 
 // Send email Route

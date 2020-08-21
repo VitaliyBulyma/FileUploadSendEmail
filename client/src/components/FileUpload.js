@@ -8,10 +8,12 @@ import {
 } from "react-router-dom";
 import Message from './Message';
 import Progress from './Progress';
-// import SendEmails from './SendEmails';
+
+
 
 
 import axios from 'axios';
+import fileUpload from 'express-fileupload';
 
 const FileUpload = () => {
   const [file, setFile] = useState('');
@@ -24,6 +26,7 @@ const FileUpload = () => {
 
   const onChange = e => {
     setFile(e.target.files[0]);
+    // console.log(e.target.files[0]);
     setFilename(e.target.files[0].name);
   };
 
@@ -49,12 +52,12 @@ const FileUpload = () => {
         }
       });
 
-      const { fileName, filePath } = res.data;
-
-      setUploadedFile({ fileName, filePath });
-
+      const { fileName, filePath, fileContent } = res.data;
+// console.log(fileContent[0]);
+      setUploadedFile({ fileName, filePath, fileContent });
       setMessage('File Uploaded');
       setLink(true);
+      setNotify(fileName);
     } catch (err) {
       if (err.response.status === 500) {
         setMessage('There was a problem with the server');
@@ -62,7 +65,10 @@ const FileUpload = () => {
         setMessage(err.response.data.msg);
       }
     }
+   
   };
+
+// console.log(uploadedFile);
 function ActionButton(){
   async function handleClick(e){
     
@@ -72,21 +78,26 @@ function ActionButton(){
     // console.log(link);
     // console.log(res);
     setNotify(res.data);
+    setUploadedFile({ fileContent: '' });
 
   }
   return (
     <div>
       <button className="btn btn-danger"  onClick={handleClick}>Send Emails</button>
-      <p>Status : {notify}</p>
+      <p>Email Status : {notify}</p>
     </div>
     
     
   );
 }
+
+
   return (
     
     <Fragment>
-      {message ? <Message msg={message} /> : null}
+    <div className="m-2">
+
+            {message ? <Message msg={message} /> : null}
       <form onSubmit={onSubmit}>
         <div className='custom-file mb-4'>
           <input
@@ -113,13 +124,20 @@ function ActionButton(){
           <div className='col-md-6 m-auto'>
             <h3 className='text-center'>{uploadedFile.fileName}</h3>
             <img style={{ width: '100%' }} src={uploadedFile.filePath} alt='' />
+
+            <ul>{uploadedFile.fileContent ? uploadedFile.fileContent.map(item=><li key={item}>{item}</li>): ''}</ul>
           </div>
         </div>
       ) : null}
+      {/* csv table */}
+
+      {/* end csv table */}
 <ActionButton/>
 <Router>
   {link && (<Redirect to={'/sendemails'}/>) }
 </Router>
+    </div>
+
 
     </Fragment>
   );
