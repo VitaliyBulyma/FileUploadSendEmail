@@ -1,19 +1,20 @@
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const app = express();
-const mongoose= require('mongoose');
-require('dotenv').config();
+const mongoose = require("mongoose");
+require("dotenv").config();
 
 // database connection
-mongoose.connect(process.env.mongoURI,{
-  useNewUrlParser: true, 
-  useUnifiedTopology: true
-}).then(()=>console.log("Database is connected!")).catch(err=> console.log(err));;
+mongoose
+  .connect(process.env.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Database is connected!"))
+  .catch((err) => console.log(err));
 
-require('./models/SentEmail');
-const EmailSent = mongoose.model('sentemails');
-
-
+require("./models/SentEmail");
+const EmailSent = mongoose.model("sentemails");
 
 // CSV an EMail Processing
 
@@ -37,7 +38,6 @@ app.post("/upload", (req, res) => {
   const file = req.files.file;
 
   // console.log("this is from upload");
-  
 
   file.mv(`${__dirname}/client/public/uploads/${file.name}`, (err) => {
     if (err) {
@@ -45,29 +45,30 @@ app.post("/upload", (req, res) => {
       return res.status(500).send(err);
     }
     // create temp list of emails to render
-    const tempResults= [];
-    var tempList= [];
+    const tempResults = [];
+    var tempList = [];
     const path = `${__dirname}/client/public/uploads/${file.name}`;
     fs.createReadStream(path)
-  .pipe(csv())
-  .on('data', (data) => tempResults.push(data))
-  .on('end', () => {
-    for (var i=0; i<tempResults.length; i++){
-        tempList.push(tempResults[i].Email);
-    }  
+      .pipe(csv())
+      .on("data", (data) => tempResults.push(data))
+      .on("end", () => {
+        for (var i = 0; i < tempResults.length; i++) {
+          tempList.push(tempResults[i].Email);
+        }
 
-     res.json({ fileName: file.name, filePath: `/uploads/${file.name}`, fileContent: tempList, entireFile: file });
+        res.json({
+          fileName: file.name,
+          filePath: `/uploads/${file.name}`,
+          fileContent: tempList,
+          entireFile: file,
+        });
+      });
 
+    // end create temp list of emails to render
   });
-  
-  // end create temp list of emails to render
-   
-  });
-
 });
 // send Email Function
-function sendEmail(list){
-  
+function sendEmail(list) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -75,9 +76,8 @@ function sendEmail(list){
       pass: EMAIL_PASSWORD,
     },
   });
-  
+
   var mailOptions = {
-    
     from: USER_EMAIL,
     to: list,
     subject: "Just Testing",
@@ -94,10 +94,8 @@ function sendEmail(list){
       //  res.send('Email(s) are sent to: ' +list +'Tech Details: '+ info.response);
     }
   });
-
 }
 // End send Email Function
-
 
 // Send email Route
 app.post("/sendemails", (req, res) => {
@@ -105,6 +103,7 @@ app.post("/sendemails", (req, res) => {
   // Initialize empty arrays
   const results = [];
   var list = [];
+  var newList= [];
   // Read data from CSV file and get emails only
 
   const path = `${__dirname}/client/public/uploads/data.csv`;
@@ -122,27 +121,58 @@ app.post("/sendemails", (req, res) => {
         .on("end", () => {
           for (var i = 0; i < results.length; i++) {
             list.push(results[i].Email);
+
+            // check if email already in the DB
+            // if email in the database, means they received email
+
+            EmailSent.find({
+              sentEmailFlag: true,
+              email: results[i].Email,
+            }).exec((err, listOfRecordsInDB) => {
+              if (err) {
+                console.log(err);
+              }
+
+              // else{console.log("list is empty, all emails already in DB");}
+
+              // console.log(newList);
+              
+              // console.log(typeof(listOfFlaggedFalse));//is object
+            });
+
+            // if email not in database, add email to list and send emails to those and save new emails
+            // End check if email already in the DB
+
+            // console.log(typeof(results[i].Email));
+            // let emailsent = new EmailSent({
+            //   email: results[i].Email,
+            //   sentEmailFlag: true,
+            // });
+            // emailsent.save((err, success) => {
+            //   if (err) {
+            //     console.log(err);
+            //   }
+            //   // console.log(success);
+            //   // return res.json(success);
+            // });
+
           }
-          console.log(list[0]);
-          
+          res.send(
+            `Email(s) are successfully sent.  File containing data has been removed from the server`
+          );
+          // console.log(typeof(list[0]));
         });
 
       // send Email
 
-      // sendEmail(list);
+      // if(newList){
+      //   sendEmail(newList);
+      // } 
 
-
-// save to database
-
-
-// End save to database
-
-
-      res.send({mess:`Email(s) are successfully sent.  File containing data has been removed from the server` });
-
+      // res.send({mess:`Email(s) are successfully sent.  File containing data has been removed from the server` });
 
       // Delete File from server - MAKE IT A FUNCTION
-     try {
+      try {
         fs.unlinkSync(path);
         //file removed
       } catch (err) {
@@ -150,20 +180,18 @@ app.post("/sendemails", (req, res) => {
       }
       // End Delete File from server
 
-
-
       // Confirmation of file Deletion - MAKE IT A FUNCTION
       fs.access(path, fs.F_OK, (err) => {
         if (err) {
           // console.error(err);
-          console.log('File is successfully removed from the server');
+          console.log("File is successfully removed from the server");
           return;
         }
-      
+
         //file exists
-        console.log('File was not removed from the system');
+        console.log("File was not removed from the system");
       });
-      // End Confirmation of file Deletion  
+      // End Confirmation of file Deletion
 
       // End
     }

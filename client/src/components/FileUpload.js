@@ -77,7 +77,7 @@ function ActionButton(){
     const res = await axios.post('/sendemails');
     // console.log(link);
     // console.log(res);
-    setNotify(res.data.mess);
+    setNotify(res.data);
     setUploadedFile({ fileContent: '' });
 
   }
