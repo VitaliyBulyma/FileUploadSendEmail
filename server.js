@@ -90,7 +90,7 @@ function sendEmail(list, text) {
     text: `
     I am sending you this email from 
     application using emails from uploaded CSV file.
-    Following text and link from front-end input field:  ${text}
+    Following text and link from front-end input field >>>>>>>:  ${text}
     `,
     // html: '<h1>Hello</h1>'
   };
