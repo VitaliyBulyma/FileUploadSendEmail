@@ -84,7 +84,8 @@ function ActionButton(){
   return (
     <div>
       <button className="btn btn-danger"  onClick={handleClick}>Send Emails</button>
-      <p>Email Status : {notify}</p>
+      <p>Email Status : 
+      {notify}</p>
     </div>
     
     
@@ -129,16 +130,12 @@ function ActionButton(){
           </div>
         </div>
       ) : null}
-      {/* csv table */}
 
-      {/* end csv table */}
 <ActionButton/>
 <Router>
   {link && (<Redirect to={'/sendemails'}/>) }
 </Router>
     </div>
-
-
     </Fragment>
   );
 };

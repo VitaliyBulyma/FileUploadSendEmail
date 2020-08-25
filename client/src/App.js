@@ -18,8 +18,7 @@ const App = () => (
               <SideBar />
               <div id="page-content-wrapper">
                 <Nav />
-                <Route path="/" exact component={FileUpload} />
-                
+                <Route path="/" exact component={FileUpload} />                
                 <Route path="/reviews" exact component={Card} />
               </div>
           </div>
