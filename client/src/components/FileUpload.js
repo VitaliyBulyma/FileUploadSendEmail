@@ -13,7 +13,7 @@ import Progress from './Progress';
 
 
 import axios from 'axios';
-import fileUpload from 'express-fileupload';
+// import fileUpload from 'express-fileupload';
 
 const FileUpload = () => {
   const [file, setFile] = useState('');

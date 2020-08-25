@@ -36,7 +36,7 @@ const Card = () => {
                             <div className="fa fa-circle green-dot"></div>
                         </div>
                         <div className="col-md-2 col-4 text-center block py-5">
-                            <div className="round-icon"> <img src="https://i.imgur.com/Grjnbah.png" width="50px" height="50px" /> </div>
+                            <div className="round-icon"> <img src="https://i.imgur.com/Grjnbah.png" width="50px" height="50px" alt="" /> </div>
                             <p className="sm-text-1 grey-text mb-0">100</p>
                             <div className="fa fa-circle red-dot"></div>
                             <div className="fa fa-circle red-dot"></div>
@@ -45,7 +45,7 @@ const Card = () => {
                             <div className="fa fa-circle"></div>
                         </div>
                         <div className="col-md-2 col-4 text-center block py-5">
-                            <div className="round-icon"> <img src="https://i.imgur.com/q2v8mqu.png" width="50px" height="50px" /> </div>
+                            <div className="round-icon"> <img src="https://i.imgur.com/q2v8mqu.png" width="50px" height="50px" alt=""/> </div>
                             <p className="sm-text-1 grey-text mb-0">100</p>
                             <div className="fa fa-circle yellow-dot"></div>
                             <div className="fa fa-circle yellow-dot"></div>
@@ -54,7 +54,7 @@ const Card = () => {
                             <div className="fa fa-circle"></div>
                         </div>
                         <div className="col-md-2 col-4 text-center block py-5">
-                            <div className="round-icon"> <img src="https://i.imgur.com/EkmVVM1.png" width="50px" height="50px" /> </div>
+                            <div className="round-icon"> <img src="https://i.imgur.com/EkmVVM1.png" width="50px" height="50px" alt="" /> </div>
                             <p className="sm-text-1 grey-text mb-0">100</p>
                             <div className="fa fa-circle"></div>
                             <div className="fa fa-circle"></div>
@@ -63,7 +63,7 @@ const Card = () => {
                             <div className="fa fa-circle"></div>
                         </div>
                         <div className="col-md-2 col-4 text-center block py-5">
-                            <div className="round-icon"> <img src="https://i.imgur.com/ZbZzavI.png" width="50px" height="50px" /> </div>
+                            <div className="round-icon"> <img src="https://i.imgur.com/ZbZzavI.png" width="50px" height="50px" alt="" /> </div>
                             <p className="sm-text-1 grey-text mb-0">100</p>
                             <div className="fa fa-circle"></div>
                             <div className="fa fa-circle"></div>
@@ -72,7 +72,7 @@ const Card = () => {
                             <div className="fa fa-circle"></div>
                         </div>
                         <div className="col-md-2 col-4 text-center block py-5">
-                            <div className="round-icon"> <img src="https://i.imgur.com/S6SGKFQ.png" width="50px" height="50px" /> </div>
+                            <div className="round-icon"> <img src="https://i.imgur.com/S6SGKFQ.png" width="50px" height="50px" alt=""/> </div>
                             <p className="sm-text-1 grey-text mb-0">100</p>
                             <div className="fa fa-circle"></div>
                             <div className="fa fa-circle"></div>
@@ -84,7 +84,7 @@ const Card = () => {
                     <div className="review p-5">
                         <div className="row d-flex">
                             
-                            <div className="profile-pic"><img src="https://i.imgur.com/Mcd6HIg.jpg" width="60px" height="60px" /></div>
+                            <div className="profile-pic"><img src="https://i.imgur.com/Mcd6HIg.jpg" width="60px" height="60px" alt="" /></div>
                             
                             <div className="d-flex flex-column pl-3">
                                 <h4>Emily</h4>
@@ -107,14 +107,14 @@ const Card = () => {
                         </div>
                         <div className="row ml-1">
                             <div className="row bg-light via">
-                                <div className="px-2"><img src="https://i.imgur.com/8lJt6UN.png" width="18px" height="18px" /></div>
+                                <div className="px-2"><img src="https://i.imgur.com/8lJt6UN.png" width="18px" height="18px" alt="" /></div>
                                 <p className="grey-text mb-0 px-3">via Google</p>
                             </div>
                         </div>
                     </div>
                     <div className="review p-5">
                         <div className="row d-flex">
-                            <div className="profile-pic"><img src="https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png" width="60px" height="60px" /></div>
+                            <div className="profile-pic"><img alt="" src="https://www.pngkit.com/png/detail/349-3499697_man-placeholder-blank-avatar-icon-png.png" width="60px" height="60px" /></div>
                             <div className="d-flex flex-column pl-3">
                                 <h4>David </h4>
                                 <p className="grey-text">50 min ago</p>
