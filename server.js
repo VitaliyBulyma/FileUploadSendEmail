@@ -22,6 +22,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 var nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+const { parseJSON } = require("jquery");
 dotenv.config();
 const { USER_EMAIL, EMAIL_PASSWORD } = process.env;
 
@@ -119,6 +120,7 @@ app.post("/sendemails", (req, res) => {
         .pipe(csv())
         .on("data", (data) => results.push(data))
         .on("end", () => {
+          // console.log(results);
           for (var i = 0; i < results.length; i++) {
             list.push(results[i].Email);
 
@@ -157,8 +159,16 @@ app.post("/sendemails", (req, res) => {
             // });
 
           }
+          // console.log(typeof(list));
+          // console.log(list[0]);
+
           res.send(
-            `Email(s) are successfully sent.  File containing data has been removed from the server`
+          `Email(s) are successfully sent to:
+
+           ${list}
+
+           File containing data has been removed from the server
+           `
           );
           // console.log(typeof(list[0]));
         });
@@ -199,4 +209,4 @@ app.post("/sendemails", (req, res) => {
 });
 // End Send email Route
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server Started..."));
+app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));

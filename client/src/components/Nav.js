@@ -15,7 +15,7 @@ const Nav = () => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
             <li className="nav-item active">
-              <a className="nav-link" href="#">Welcome, UserName! <span className="sr-only">(current)</span></a>
+              <a className="nav-link" href="#">Welcome back, Black Hawk! <span className="sr-only">(current)</span></a>
             </li>
             <li className="nav-item active">
               <button className="btn btn-primary">Logout</button>
