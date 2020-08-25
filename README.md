@@ -17,3 +17,9 @@ create .env file in parent directory with your email and password
 # Serve on localhost:3000
 npm run dev
 ```
+
+
+# Reviews Page
+![Reviews Page Mockup](screenshots/reviews.jpg)
+# Mailer Page
+![Mailer Page](screenshots/mailer.jpg)

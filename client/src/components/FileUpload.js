@@ -13,7 +13,7 @@ import Progress from './Progress';
 
 
 import axios from 'axios';
-import fileUpload from 'express-fileupload';
+// import fileUpload from 'express-fileupload';
 
 const FileUpload = () => {
   const [file, setFile] = useState('');
@@ -84,7 +84,8 @@ function ActionButton(){
   return (
     <div>
       <button className="btn btn-danger"  onClick={handleClick}>Send Emails</button>
-      <p>Email Status : {notify}</p>
+      <p>Email Status : 
+      {notify}</p>
     </div>
     
     
@@ -129,16 +130,12 @@ function ActionButton(){
           </div>
         </div>
       ) : null}
-      {/* csv table */}
 
-      {/* end csv table */}
 <ActionButton/>
 <Router>
   {link && (<Redirect to={'/sendemails'}/>) }
 </Router>
     </div>
-
-
     </Fragment>
   );
 };

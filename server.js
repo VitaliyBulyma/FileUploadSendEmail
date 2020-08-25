@@ -22,6 +22,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 var nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+const { parseJSON } = require("jquery");
 dotenv.config();
 const { USER_EMAIL, EMAIL_PASSWORD } = process.env;
 
@@ -95,20 +96,36 @@ function sendEmail(list) {
     }
   });
 }
+// Compares two arrays, returns new array with unique items
+function compare(arr1, arr2) {
+  var tempArray = [];
+  for (var i = 0; i < arr1.length; i++) {
+    if (arr2.indexOf(arr1[i]) === -1) {
+      tempArray.push(arr1[i]);
+    }
+  }
+  for (var j = 0; j < arr2.length; j++) {
+    if (arr1.indexOf(arr2[j]) === -1) {
+      tempArray.push(arr2[j]);
+    }
+  }
+  return tempArray;
+}
 // End send Email Function
 
 // Send email Route
 app.post("/sendemails", (req, res) => {
-  // Start
   // Initialize empty arrays
+
   const results = [];
   var list = [];
-  var newList= [];
+  
   // Read data from CSV file and get emails only
 
   const path = `${__dirname}/client/public/uploads/data.csv`;
 
   fs.access(path, fs.F_OK, (err) => {
+    // file does not exist
     if (err) {
       console.error(err);
       res.send("CSV file containing emails list does not exist");
@@ -119,84 +136,84 @@ app.post("/sendemails", (req, res) => {
         .pipe(csv())
         .on("data", (data) => results.push(data))
         .on("end", () => {
+          // add all emails from csv file to array
           for (var i = 0; i < results.length; i++) {
             list.push(results[i].Email);
-
-            // check if email already in the DB
-            // if email in the database, means they received email
-
-            EmailSent.find({
+          }
+          // now check if emails exist in db
+          EmailSent.find({          
+            email: list.map((item) => item),
+          }).exec((err, listOfRecordsInDB) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log(
+              "list of records in database :" +
+                listOfRecordsInDB.map((item) => item.email)
+            );
+            var newArray = [];
+            // looking for emails that don't exist in Db
+            newArray =  compare(list,listOfRecordsInDB.map((item) => item.email));
+            console.log("this is a TempArray of differences "+ newArray );            
+            // sends email to emails that do not exist in db and save them to db
+            for (var i=0; i<newArray.length; i++){            
+            sendEmail(newArray[i]);
+            let emailsent = new EmailSent({
+              email: newArray[i],
               sentEmailFlag: true,
-              email: results[i].Email,
-            }).exec((err, listOfRecordsInDB) => {
+            });
+            emailsent.save((err, success) => {
               if (err) {
                 console.log(err);
               }
-
-              // else{console.log("list is empty, all emails already in DB");}
-
-              // console.log(newList);
-              
-              // console.log(typeof(listOfFlaggedFalse));//is object
+              console.log("this is success message from save to db"+success);
+              // return res.json(success);
             });
+            }
 
-            // if email not in database, add email to list and send emails to those and save new emails
-            // End check if email already in the DB
+            // End save emails that are not and db and received email
+          });
+          // end find emails
 
-            // console.log(typeof(results[i].Email));
-            // let emailsent = new EmailSent({
-            //   email: results[i].Email,
-            //   sentEmailFlag: true,
-            // });
-            // emailsent.save((err, success) => {
-            //   if (err) {
-            //     console.log(err);
-            //   }
-            //   // console.log(success);
-            //   // return res.json(success);
-            // });
+          // end of now check if emails exist in db
 
-          }
           res.send(
-            `Email(s) are successfully sent.  File containing data has been removed from the server`
+            `Email(s) are successfully sent to:
+
+           ${list}
+
+           File containing data has been removed from the server
+           `
           );
-          // console.log(typeof(list[0]));
+          return list;
         });
-
-      // send Email
-
-      // if(newList){
-      //   sendEmail(newList);
-      // } 
-
-      // res.send({mess:`Email(s) are successfully sent.  File containing data has been removed from the server` });
-
       // Delete File from server - MAKE IT A FUNCTION
-      try {
-        fs.unlinkSync(path);
-        //file removed
-      } catch (err) {
-        console.error(err);
-      }
-      // End Delete File from server
+      setTimeout(() => {
+        try {
+          fs.unlinkSync(path);
+          //file removed
+        } catch (err) {
+          console.error(err);
+        }
+        // End Delete File from server
+      }, 3000);
 
       // Confirmation of file Deletion - MAKE IT A FUNCTION
-      fs.access(path, fs.F_OK, (err) => {
-        if (err) {
-          // console.error(err);
-          console.log("File is successfully removed from the server");
-          return;
-        }
-
-        //file exists
-        console.log("File was not removed from the system");
-      });
-      // End Confirmation of file Deletion
-
-      // End
-    }
+      setTimeout(() => {
+        fs.access(path, fs.F_OK, (err) => {
+          if (err) {
+            // console.error(err);
+            console.log("File is successfully removed from the server");
+            return;
+          }
+          //file exists
+          console.log("File was not removed from the system");
+        });
+        // End Confirmation of file Deletion
+      }, 3001);      
+    } //end of else file exist
   });
-});
-// End Send email Route
+ }); // End Send email Route
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server Started..."));
+app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));
