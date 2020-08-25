@@ -35,8 +35,13 @@ app.post("/upload", (req, res) => {
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
-
+// get file
   const file = req.files.file;
+  file.name = "data.csv";
+// get email content
+
+  const emailContent = req.body.emailContent;
+  // console.log(emailContent);
 
   // console.log("this is from upload");
 
@@ -69,7 +74,7 @@ app.post("/upload", (req, res) => {
   });
 });
 // send Email Function
-function sendEmail(list) {
+function sendEmail(list, text) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -82,8 +87,11 @@ function sendEmail(list) {
     from: USER_EMAIL,
     to: list,
     subject: "Just Testing",
-    text: `I am sending you this email 
-    from Node.js application using emails from uploaded CSV file`,
+    text: `
+    I am sending you this email from 
+    application using emails from uploaded CSV file.
+    Following text and link from front-end input field >>>>>>>:  ${text}
+    `,
     // html: '<h1>Hello</h1>'
   };
 
@@ -111,15 +119,16 @@ function compare(arr1, arr2) {
   }
   return tempArray;
 }
-// End send Email Function
+
 
 // Send email Route
 app.post("/sendemails", (req, res) => {
   // Initialize empty arrays
-
+  // console.log(req.body.emailContent);
+  const emailContent = req.body.emailContent;
   const results = [];
   var list = [];
-  
+
   // Read data from CSV file and get emails only
 
   const path = `${__dirname}/client/public/uploads/data.csv`;
@@ -141,7 +150,7 @@ app.post("/sendemails", (req, res) => {
             list.push(results[i].Email);
           }
           // now check if emails exist in db
-          EmailSent.find({          
+          EmailSent.find({
             email: list.map((item) => item),
           }).exec((err, listOfRecordsInDB) => {
             if (err) {
@@ -153,38 +162,48 @@ app.post("/sendemails", (req, res) => {
             );
             var newArray = [];
             // looking for emails that don't exist in Db
-            newArray =  compare(list,listOfRecordsInDB.map((item) => item.email));
-            console.log("this is a TempArray of differences "+ newArray );            
+            newArray = compare(
+              list,
+              listOfRecordsInDB.map((item) => item.email)
+            );
+            console.log("this is a TempArray of differences " + newArray);
             // sends email to emails that do not exist in db and save them to db
-            for (var i=0; i<newArray.length; i++){            
-            sendEmail(newArray[i]);
-            let emailsent = new EmailSent({
-              email: newArray[i],
-              sentEmailFlag: true,
-            });
-            emailsent.save((err, success) => {
-              if (err) {
-                console.log(err);
-              }
-              console.log("this is success message from save to db"+success);
-              // return res.json(success);
-            });
+            for (var i = 0; i < newArray.length; i++) {
+              sendEmail(newArray[i], emailContent);
+              let emailsent = new EmailSent({
+                email: newArray[i],
+                sentEmailFlag: true,
+              });
+              emailsent.save((err, success) => {
+                if (err) {
+                  console.log(err);
+                }
+                console.log(
+                  "this is success message from save to db" + success
+                );
+                // return res.json(success);
+              });
             }
+            // check if newArray is empty
+            if(newArray.length === 0){
+              newArray = "No New Records in csv file. ";
+            }
+            // End check if newArray is empty
 
             // End save emails that are not and db and received email
+            res.send(
+              `Email(s) are successfully sent to:
+
+              ${newArray}
+
+              File containing data has been removed from the server
+              `
+            );
           });
           // end find emails
 
           // end of now check if emails exist in db
 
-          res.send(
-            `Email(s) are successfully sent to:
-
-           ${list}
-
-           File containing data has been removed from the server
-           `
-          );
           return list;
         });
       // Delete File from server - MAKE IT A FUNCTION
@@ -210,10 +229,10 @@ app.post("/sendemails", (req, res) => {
           console.log("File was not removed from the system");
         });
         // End Confirmation of file Deletion
-      }, 3001);      
+      }, 3001);
     } //end of else file exist
   });
- }); // End Send email Route
+}); // End Send email Route
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));

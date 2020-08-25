@@ -12,6 +12,13 @@ npm install in client directory
 
 create .env file in parent directory with your email and password
 
+USER_EMAIL='your@Gmail'
+
+EMAIL_PASSWORD='yourgmailpassword'
+
+mongoURI='yourmongodbconnectionstring'
+
+
 
 
 # Serve on localhost:3000
