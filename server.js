@@ -90,9 +90,9 @@ function sendEmail(list, text) {
     text: `
     I am sending you this email from 
     application using emails from uploaded CSV file.
-    Following text and link from front-end input field >>>>>>>:  ${text}
+    Following text is from front-end input field >>>>>>>:  ${text}
     `,
-    // html: '<h1>Hello</h1>'
+    html: '<img src="/image" alt="background-image" /> '
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -232,7 +232,13 @@ app.post("/sendemails", (req, res) => {
       }, 3001);
     } //end of else file exist
   });
-}); // End Send email Route
-
+}); // End Send email Route 
+// Image route
+let counter = 0;
+app.get('/image', (req,res)=>{
+  counter++;
+  console.log(counter);
+  res.send(`This route was opened ${counter} times`);
+});// End Image route
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));
