@@ -196,7 +196,7 @@ app.post("/sendemails", (req, res) => {
 
             // End save emails that are not and db and received email
             res.send(
-              `Email(s) are successfully sent to:
+              `Email(s) are sent to:
 
               ${newArray}
 
