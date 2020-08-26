@@ -2,6 +2,7 @@ const express = require("express");
 const fileUpload = require("express-fileupload");
 const app = express();
 const mongoose = require("mongoose");
+const path = require('path');
 require("dotenv").config();
 
 // database connection
@@ -29,7 +30,6 @@ const { USER_EMAIL, EMAIL_PASSWORD } = process.env;
 // End CSV an EMail Processing
 
 app.use(fileUpload());
-app.use('/');
 
 // Upload Endpoint
 app.post("/upload", (req, res) => {
@@ -241,5 +241,14 @@ app.get('/image', (req,res)=>{
   console.log(counter);
   res.send(`This route was opened ${counter} times`);
 });// End Image route
+
+
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static('client/build'));
+
+  app.get('*', (req,res)=>{
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));
