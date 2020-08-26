@@ -29,6 +29,7 @@ const { USER_EMAIL, EMAIL_PASSWORD } = process.env;
 // End CSV an EMail Processing
 
 app.use(fileUpload());
+app.use('/');
 
 // Upload Endpoint
 app.post("/upload", (req, res) => {
