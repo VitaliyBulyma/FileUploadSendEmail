@@ -77,7 +77,10 @@ app.post("/upload", (req, res) => {
 // send Email Function
 function sendEmail(list, text) {
   var transporter = nodemailer.createTransport({
-    service: "gmail",
+    // service: "gmail",
+    host: "smtp.privateemail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: USER_EMAIL,
       pass: EMAIL_PASSWORD,
@@ -93,7 +96,7 @@ function sendEmail(list, text) {
     application using emails from uploaded CSV file.
     Following text is from front-end input field >>>>>>>:  ${text}
     `,
-    html: '<img src="/image" alt="background-image" /> '
+    
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
