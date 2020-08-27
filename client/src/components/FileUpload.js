@@ -19,7 +19,7 @@ const FileUpload = () => {
   const [message, setMessage] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [link, setLink] = useState(false);
-  const [notify, setNotify] = useState("No File Uploaded");
+  const [notify, setNotify] = useState({filename:"No File Uploaded", mess:'', list:''});
   const [emailContent, setEmailContent] = useState("");
 
   const onChange = (e) => {
@@ -60,7 +60,8 @@ const FileUpload = () => {
       setUploadedFile({ fileName, filePath, fileContent });
       setMessage("File Uploaded");
       setLink(true);
-      setNotify(fileName);
+      
+      setNotify({filename: fileName});
     } catch (err) {
       if (err.response.status === 500) {
         setMessage("There was a problem with the server");
@@ -83,8 +84,8 @@ const FileUpload = () => {
         "Content-Type": "multipart/form-data",
       }} );     
       // console.log(link);
-      // console.log(res);
-      setNotify(res.data);
+      console.log(res.data);
+      setNotify({mess:res.data.mess, list: res.data.list});
       setUploadedFile({ fileContent: "" });
     }
     return (
@@ -92,7 +93,8 @@ const FileUpload = () => {
         <button className="btn btn-danger" onClick={handleClick}>
           Send Emails
         </button>
-        <p>Email Status :{notify}</p>
+        <p>Email Status :{notify.mess === '' ? notify.filename : notify.mess}</p>
+        <p>{notify.list}</p>
       </div>
     );
   }

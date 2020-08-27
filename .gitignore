@@ -1,5 +1,5 @@
 client/node_modules/
-
+keys.js
 client/build
 .env
 data.csv

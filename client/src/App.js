@@ -3,6 +3,7 @@ import FileUpload from './components/FileUpload';
 import Nav from './components/Nav';
 import SideBar from './components/SideBar';
 import Card from './components/Reviews';
+import Dash from './components/Dashboard';
 
 import { BrowserRouter, Route } from "react-router-dom";
 
@@ -20,6 +21,7 @@ const App = () => (
                 <Nav />
                 <Route path="/" exact component={FileUpload} />                
                 <Route path="/reviews" exact component={Card} />
+                <Route path="/dashboard" exact component={Dash} />
               </div>
           </div>
         </BrowserRouter>      
