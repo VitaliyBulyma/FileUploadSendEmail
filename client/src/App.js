@@ -22,6 +22,7 @@ const App = () => (
                 <Route path="/" exact component={FileUpload} />                
                 <Route path="/reviews" exact component={Card} />
                 <Route path="/dashboard" exact component={Dash} />
+                
               </div>
           </div>
         </BrowserRouter>      
