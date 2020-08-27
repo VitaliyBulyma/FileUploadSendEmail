@@ -18,7 +18,8 @@ const Nav = () => {
               <p className="nav-link" href="#">Welcome back, Black Hawk! <span className="sr-only">(current)</span></p>
             </li>
             <li className="nav-item active">
-              <button className="btn btn-primary">Logout</button>
+              {/* <button className="btn btn-primary">Logout</button> */}
+              <a href="/auth/google" >Sign-In with Google</a>
             </li>
           </ul>
         </div>

@@ -1,7 +1,10 @@
 const express = require("express");
-const fileUpload = require("express-fileupload");
-const app = express();
 const mongoose = require("mongoose");
+const keys = require("./config/keys");
+const cookieSession = require('cookie-session');
+const passport = require('passport');
+const fileUpload = require("express-fileupload");
+
 const path = require('path');
 require("dotenv").config();
 
@@ -14,9 +17,26 @@ mongoose
   .then(() => console.log("Database is connected!"))
   .catch((err) => console.log(err));
 
+const app = express();
+
 require("./models/SentEmail");
+require("./models/User");
+require('./services/passport');
 const EmailSent = mongoose.model("sentemails");
 
+// tell express to use Cookies
+
+app.use(
+  cookieSession({
+    maxAge: 30*24*60*60*1000, 
+    keys: [keys.cookieKey]
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+require ('./routes/authRoutes')(app);
 // CSV an EMail Processing
 
 const csv = require("csv-parser");
@@ -77,7 +97,10 @@ app.post("/upload", (req, res) => {
 // send Email Function
 function sendEmail(list, text) {
   var transporter = nodemailer.createTransport({
-    service: "gmail",
+    // service: "gmail",
+    host: "smtp.privateemail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: USER_EMAIL,
       pass: EMAIL_PASSWORD,
@@ -93,17 +116,23 @@ function sendEmail(list, text) {
     application using emails from uploaded CSV file.
     Following text is from front-end input field >>>>>>>:  ${text}
     `,
-    html: '<img src="/image" alt="background-image" /> '
+    dsn: {
+      id: 'some random message specific id',
+      return: 'headers',
+      notify: 'success',
+      recipient: 'vitaliy_bulyma@yahoo.ca'
+  }
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
-      // res.send("Email(s) are sent to: " + list+". File containing data has been removed from the server");
-      //  res.send('Email(s) are sent to: ' +list +'Tech Details: '+ info.response);
+      console.log("this is accepted email: "+info.accepted[0]);
+      
     }
   });
+  
 }
 // Compares two arrays, returns new array with unique items
 function compare(arr1, arr2) {
@@ -170,6 +199,7 @@ app.post("/sendemails", (req, res) => {
             console.log("this is a TempArray of differences " + newArray);
             // sends email to emails that do not exist in db and save them to db
             for (var i = 0; i < newArray.length; i++) {
+              
               sendEmail(newArray[i], emailContent);
               let emailsent = new EmailSent({
                 email: newArray[i],
@@ -179,11 +209,12 @@ app.post("/sendemails", (req, res) => {
                 if (err) {
                   console.log(err);
                 }
-                console.log(
-                  "this is success message from save to db" + success
-                );
+                // console.log(
+                //   "this is success message from save to db" + success
+                // );
                 // return res.json(success);
               });
+              
             }
             // check if newArray is empty
             if(newArray.length === 0){
@@ -192,13 +223,15 @@ app.post("/sendemails", (req, res) => {
             // End check if newArray is empty
 
             // End save emails that are not and db and received email
-            res.send(
-              `Email(s) are successfully sent to:
+            res.send({
+              mess: `Email(s) are sent to:
 
               ${newArray}
 
-              File containing data has been removed from the server
+              File containing data removed from the server
               `
+            }
+              
             );
           });
           // end find emails
@@ -234,15 +267,10 @@ app.post("/sendemails", (req, res) => {
     } //end of else file exist
   });
 }); // End Send email Route 
-// Image route
-let counter = 0;
-app.get('/image', (req,res)=>{
-  counter++;
-  console.log(counter);
-  res.send(`This route was opened ${counter} times`);
-});// End Image route
 
 
+
+// code below will instruct heroku to serve Build folder
 if(process.env.NODE_ENV === 'production'){
   app.use(express.static('client/build'));
 
@@ -250,5 +278,7 @@ if(process.env.NODE_ENV === 'production'){
     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
   });
 }
+
+// assign port and listen to it
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server Started... on port ${PORT}`));
