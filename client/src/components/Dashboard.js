@@ -5,10 +5,10 @@ const Dash = ()=> {
     return (
         <div className="m-4">
             <div className="card">
-                <div class="card-body text-center">
+                <div className="card-body text-center">
                     
-                    <h4 class="card-title">This is Home for Dashboard</h4>
-                    <p class="card-text">Statistic related to this account will go here</p>
+                    <h4 className="card-title">This is Home for Dashboard</h4>
+                    <p className="card-text">Statistic related to this account will go here</p>
                                   
                 </div>
             </div>
