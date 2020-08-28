@@ -1,4 +1,5 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, Component } from "react";
+import { connect } from "react-redux";
 import {
   BrowserRouter as Router,
   // Switch,
@@ -12,14 +13,18 @@ import Progress from "./Progress";
 import axios from "axios";
 // import fileUpload from 'express-fileupload';
 
-const FileUpload = () => {
+const Upload = () => {
   const [file, setFile] = useState("");
   const [filename, setFilename] = useState("Choose File");
   const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [link, setLink] = useState(false);
-  const [notify, setNotify] = useState({filename:"No File Uploaded", mess:'', list:''});
+  const [notify, setNotify] = useState({
+    filename: "No File Uploaded",
+    mess: "",
+    list: "",
+  });
   const [emailContent, setEmailContent] = useState("");
 
   const onChange = (e) => {
@@ -28,7 +33,7 @@ const FileUpload = () => {
     setFilename(e.target.files[0].name);
   };
   const TAOnChange = (e) => {
-        setEmailContent(e.target.value);    
+    setEmailContent(e.target.value);
     // setFilename(e.target.files[0].name);
   };
 
@@ -60,8 +65,8 @@ const FileUpload = () => {
       setUploadedFile({ fileName, filePath, fileContent });
       setMessage("File Uploaded");
       setLink(true);
-      
-      setNotify({filename: fileName});
+
+      setNotify({ filename: fileName });
     } catch (err) {
       if (err.response.status === 500) {
         setMessage("There was a problem with the server");
@@ -76,16 +81,17 @@ const FileUpload = () => {
     async function handleClick(e) {
       e.preventDefault();
       // console.log('the link was clicked');
-      const formData = new FormData();      
+      const formData = new FormData();
       formData.append("emailContent", emailContent);
 
-      const res = await axios.post("/sendemails", formData,
-      { headers: {
-        "Content-Type": "multipart/form-data",
-      }} );     
+      const res = await axios.post("/sendemails", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       // console.log(link);
       console.log(res.data);
-      setNotify({mess:res.data.mess, list: res.data.list});
+      setNotify({ mess: res.data.mess, list: res.data.list });
       setUploadedFile({ fileContent: "" });
     }
     return (
@@ -93,7 +99,9 @@ const FileUpload = () => {
         <button className="btn btn-danger" onClick={handleClick}>
           Send Emails
         </button>
-        <p>Email Status :{notify.mess === '' ? notify.filename : notify.mess}</p>
+        <p>
+          Email Status :{notify.mess === "" ? notify.filename : notify.mess}
+        </p>
         <p>{notify.list}</p>
       </div>
     );
@@ -162,4 +170,32 @@ const FileUpload = () => {
   );
 };
 
-export default FileUpload;
+class FileUpload extends Component {
+  renderContent() {
+    switch (this.props.auth) {
+      case null:
+        return;
+      case false:
+        return (
+          <div className="m-4">
+            <div className="card">
+              <div className="card-body text-center">
+                <h4 className="card-title">Mailer page</h4>
+                <p>Must be logged in to view the page</p>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return <Upload />;
+    }
+  }
+  render() {
+    return <div>{this.renderContent()}</div>;
+  }
+}
+
+function mapStateToProps(state) {
+  return { auth: state.auth };
+}
+export default connect(mapStateToProps)(FileUpload);
