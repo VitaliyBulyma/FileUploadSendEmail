@@ -33,11 +33,17 @@ class Nav extends Component {
   render(){
     function toggleNav (){
       document.getElementById("wrapper").classList.toggle("toggled");
+      if(document.getElementById("wrapper").classList.value === "d-flex"){
+        document.getElementById("menu-toggle").innerText="Hide Menu";
+      }else{
+        document.getElementById("menu-toggle").innerText="Show Menu";
+      }    
+      
     }
   
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-2">
-      <button className="btn btn-primary" onClick={toggleNav} id="menu-toggle">Show/Hide Menu</button>
+      <button className="btn btn-primary" onClick={toggleNav} id="menu-toggle">Hide Menu</button>
 
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
