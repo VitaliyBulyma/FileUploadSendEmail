@@ -22,7 +22,7 @@ class Nav extends Component {
         return (
           <>
           <li className="nav-item active">
-            <p className="nav-link" href="#">Welcome back, {name}! <span className="sr-only">(current)</span></p>
+            <p className="nav-link" href="#">Welcome back, {name}! <span className="sr-only">{name}</span></p>
           </li>
           <li><a href="/api/logout" className="btn btn-primary">Logout</a></li>
           </>    
