@@ -7,4 +7,10 @@ module.exports = function(app) {
     app.use(createProxyMiddleware('/api/*', 
     { target: 'http://localhost:5000' } 
 ));
+    app.use(createProxyMiddleware('/upload', 
+    { target: 'http://localhost:5000' } 
+));
+    app.use(createProxyMiddleware('/sendemails', 
+    { target: 'http://localhost:5000' } 
+));
 };
